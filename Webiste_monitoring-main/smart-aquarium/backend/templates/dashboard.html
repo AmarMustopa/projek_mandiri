@@ -1,0 +1,306 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Aquarium IoT Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{% static 'css/influxdb-integration.css' %}">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .glass-effect {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        .stat-card:hover {
+            border-color: #06b6d4;
+            box-shadow: 0 8px 16px rgba(6, 182, 212, 0.15);
+            transform: translateY(-2px);
+        }
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-card .text-slate-400 {
+            color: #6b7280 !important;
+        }
+        .stat-card .text-slate-500 {
+            color: #9ca3af !important;
+        }
+    </style>
+</head>
+<body class="text-slate-100">
+    <div class="min-h-screen flex">
+        <!-- Sidebar Navigation -->
+        <aside class="w-72 glass-effect border-r border-slate-700 fixed left-0 top-0 h-screen flex flex-col">
+            <div class="p-8 border-b border-slate-700">
+                <div class="flex items-center gap-3 group cursor-pointer">
+                    <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center text-2xl font-bold">🐠</div>
+                    <div>
+                        <h1 class="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">Sistem Aquarium</h1>
+                        <p class="text-xs text-slate-400">IoT Monitoring</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="p-6 space-y-3 flex-1">
+                <a href="/" class="flex items-center gap-4 px-4 py-3 rounded-xl bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 text-white font-medium">
+                    <span>📊</span> Dashboard
+                </a>
+                <a href="/analytics" class="flex items-center gap-4 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-700/50 transition-all">
+                    <span>📈</span> Analytics
+                </a>
+                <a href="/settings" class="flex items-center gap-4 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-700/50 transition-all">
+                    <span>⚙️</span> Settings
+                </a>
+            </nav>
+
+            <div class="p-6 border-t border-slate-700 mt-auto">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
+                        <span class="text-base font-bold text-white">{{ request.user.username|first|upper }}</span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-base font-semibold text-white">{{ request.user.username }}</p>
+                        <p class="text-xs text-slate-400">Admin</p>
+                    </div>
+                </div>
+                <a href="{% url 'logout' %}" class="flex items-center justify-center gap-2 w-full px-3 py-2 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 rounded-full transition-all shadow-lg hover:shadow-xl group">
+                    <svg class="w-3.5 h-3.5 text-white transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
+                    <span class="text-white font-medium text-xs">LOGOUT</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto ml-72">
+            <!-- Loading Indicator -->
+            <div id="dataLoader" style="display: none;">Loading data...</div>
+            
+            <!-- Error Message -->
+            <div id="errorMessage" style="display: none;"></div>
+            
+            <div class="glass-effect border-b border-slate-700 sticky top-0 z-40">
+                <div class="px-8 py-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-3xl font-bold text-white">Welcome To Website Monitoring</h1>
+                            <p class="text-slate-400 mt-1">Monitor your aquarium systems in real-time</p>
+                            <p class="text-slate-500 text-sm mt-1">Last update: <span id="lastUpdate">-</span></p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <button onclick="DashboardController.refreshData()" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 rounded-lg text-white font-medium transition-colors">
+                                🔄 Refresh
+                            </button>
+                            <button class="p-3 rounded-xl hover:bg-slate-700/50 transition-colors text-slate-300">
+                                <span title="Notifications">🔔</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-8 py-8 space-y-8">
+                <!-- Key Metrics Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Turbidity -->
+                    <div class="stat-card group">
+                        <div class="flex items-start justify-between mb-4">
+                            <div>
+                                <p class="text-gray-700 text-sm font-medium mb-1">Turbidity</p>
+                                <div class="metric-value" id="turbidityValue">100</div>
+                                <p class="text-gray-600 text-xs mt-1">NTU</p>
+                            </div>
+                            <div class="p-3 rounded-xl bg-blue-500/20 group-hover:bg-blue-500/30 transition-colors">
+                                <span class="text-xl">💧</span>
+                            </div>
+                        </div>
+                        <div class="w-full bg-slate-700/50 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-blue-500 to-cyan-500 h-2 rounded-full" id="turbidityProgress" style="width: 40%"></div>
+                        </div>
+                        <span id="turbStatus" class="px-3 py-1 rounded-full text-xs font-semibold mt-2 inline-block">Loading...</span>
+                    </div>
+
+                    <!-- Temperature -->
+                    <div class="stat-card group">
+                        <div class="flex items-start justify-between mb-4">
+                            <div>
+                                <p class="text-gray-700 text-sm font-medium mb-1">Temperature</p>
+                                <div class="metric-value" id="temperatureValue">22.5</div>
+                                <p class="text-gray-600 text-xs mt-1">°C</p>
+                            </div>
+                            <div class="p-3 rounded-xl bg-orange-500/20 group-hover:bg-orange-500/30 transition-colors">
+                                <span class="text-xl">🌡️</span>
+                            </div>
+                        </div>
+                        <div class="w-full bg-slate-700/50 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-orange-500 to-red-500 h-2 rounded-full" id="temperatureProgress" style="width: 55%"></div>
+                        </div>
+                        <span id="tempStatus" class="px-3 py-1 rounded-full text-xs font-semibold mt-2 inline-block">Loading...</span>
+                    </div>
+
+                    <!-- pH Level -->
+                    <div class="stat-card group">
+                        <div class="flex items-start justify-between mb-4">
+                            <div>
+                                <p class="text-gray-700 text-sm font-medium mb-1">pH Level</p>
+                                <div class="metric-value" id="phValue">7.2</div>
+                                <p class="text-gray-600 text-xs mt-1">pH</p>
+                            </div>
+                            <div class="p-3 rounded-xl bg-purple-500/20 group-hover:bg-purple-500/30 transition-colors">
+                                <span class="text-xl">⚗️</span>
+                            </div>
+                        </div>
+                        <div class="w-full bg-slate-700/50 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full" id="phProgress" style="width: 58%"></div>
+                        </div>
+                        <span id="phStatus" class="px-3 py-1 rounded-full text-xs font-semibold mt-2 inline-block">Loading...</span>
+                    </div>
+
+                    <!-- Water Level -->
+                    <div class="stat-card group">
+                        <div class="flex items-start justify-between mb-4">
+                            <div>
+                                <p class="text-gray-700 text-sm font-medium mb-1">Water Level</p>
+                                <div class="metric-value" id="waterLevelValue">75</div>
+                                <p class="text-gray-600 text-xs mt-1">%</p>
+                            </div>
+                            <div class="p-3 rounded-xl bg-green-500/20 group-hover:bg-green-500/30 transition-colors">
+                                <span class="text-xl">💦</span>
+                            </div>
+                        </div>
+                        <div class="w-full bg-slate-700/50 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-green-500 to-emerald-500 h-2 rounded-full" id="waterLevelProgress" style="width: 75%"></div>
+                        </div>
+                        <span id="levelStatus" class="px-3 py-1 rounded-full text-xs font-semibold mt-2 inline-block">Loading...</span>
+                    </div>
+                </div>
+
+                <!-- System Control -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Habitat Health -->
+                    <div class="stat-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Habitat Health</h3>
+                            <span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">EXCELLENT</span>
+                        </div>
+                        <div class="text-center py-8">
+                            <div class="text-5xl font-bold text-blue-500" id="habitatHealth">92</div>
+                            <p class="text-gray-600 mt-2">% Overall Health</p>
+                        </div>
+                    </div>
+
+                    <!-- Pump Control System -->
+                    <div class="stat-card lg:col-span-2">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-gray-900">Pump Control System</h3>
+                            <div class="flex gap-2">
+                                <span class="inline-block w-3 h-3 rounded-full bg-green-500 animate-pulse" id="pumpIndicator"></span>
+                                <span class="text-xs text-green-400 font-medium" id="pumpStatus">STANDBY</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="p-4 rounded-lg bg-gray-50 border border-gray-200">
+                                <div class="flex items-center gap-4">
+                                    <div class="p-3 rounded-lg bg-emerald-100">
+                                        <span class="text-2xl">💨</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500 text-xs uppercase tracking-wider">Pump Status</p>
+                                        <p class="text-gray-900 font-semibold" id="pumpStatusText">Standby</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-4 rounded-lg bg-gray-50 border border-gray-200">
+                                <div class="flex items-center gap-4">
+                                    <div class="p-3 rounded-lg bg-blue-100">
+                                        <span class="text-2xl">📊</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500 text-xs uppercase tracking-wider">Turbidity</p>
+                                        <p class="text-gray-900 font-semibold" id="currentTurbidity">6.53 NTU</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Care Guidelines -->
+                <div class="stat-card">
+                    <div class="flex items-start gap-4">
+                        <div class="p-4 rounded-xl bg-blue-100">
+                            <span class="text-3xl">🐠</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold text-gray-900 mb-4">Comet Goldfish Care Guidelines</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="p-4 rounded-lg bg-cyan-50 border border-cyan-200">
+                                    <p class="font-semibold text-cyan-700 mb-2">💧 Water Quality</p>
+                                    <p class="text-sm text-gray-700">Turbidity &lt; 10 NTU, pH 7.0-8.0</p>
+                                </div>
+                                <div class="p-4 rounded-lg bg-orange-50 border border-orange-200">
+                                    <p class="font-semibold text-orange-700 mb-2">🌡️ Ideal Temperature</p>
+                                    <p class="text-sm text-gray-700">20-25°C for optimal growth</p>
+                                </div>
+                                <div class="p-4 rounded-lg bg-blue-50 border border-blue-200">
+                                    <p class="font-semibold text-blue-700 mb-2">🔄 Water Exchange</p>
+                                    <p class="text-sm text-gray-700">Auto-triggered when turbidity is high</p>
+                                </div>
+                                <div class="p-4 rounded-lg bg-green-50 border border-green-200">
+                                    <p class="font-semibold text-green-700 mb-2">📊 Monitoring</p>
+                                    <p class="text-sm text-gray-700">Data updates every 5 seconds</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Semua data akan diambil dari InfluxDB melalui DashboardController
+        // Tidak ada dummy data lagi
+
+        // Dummy simulation removed - using real InfluxDB data only
+    </script>
+    
+    <!-- InfluxDB Integration Scripts (menggunakan Django Proxy) -->
+    <script src="{% static 'js/influxdb-proxy-service.js' %}"></script>
+    <script src="{% static 'js/dashboard-controller.js' %}"></script>
+    
+    <script>
+        // Debug logging
+        console.log('📱 Dashboard page loaded');
+        console.log('🔌 InfluxDB Service:', typeof InfluxDBService);
+        console.log('🎛️ Dashboard Controller:', typeof DashboardController);
+    </script>
+</body>
+</html>

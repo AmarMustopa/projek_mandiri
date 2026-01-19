@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+  <g transform="translate(60,60)">
+    <!-- pivot circle -->
+    <circle cx="0" cy="0" r="4" fill="#e6f0ff" />
+    <!-- needle -->
+    <path d="M0 -4 L2 -40 L0 -44 L-2 -40 Z" fill="#ffffff" opacity="0.95"/>
+    <!-- shadow -->
+    <path d="M0 -4 L2 -40 L0 -44 L-2 -40 Z" fill="#000" opacity="0.06" transform="translate(1,1)"/>
+  </g>
+</svg>

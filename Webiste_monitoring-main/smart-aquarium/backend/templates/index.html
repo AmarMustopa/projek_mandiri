@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Aquarium Dashboard</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-primary: #3b82f6;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --accent-danger: #ef4444;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --border-color: rgba(148, 163, 184, 0.1);
+        }
+        
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+<body>
+    <div class="dashboard">
+        <div class="grid-container">
+            <!-- Top metrics row -->
+            <div class="metric-card card col-span-4">
+                <div class="metric-header">
+                    <h3 class="metric-title">Suhu Air</h3>
+                    <p class="metric-subtitle">30 hari terakhir (Oktober 2025)</p>
+                    <div class="metric-value" id="avgTemp">27.4°C</div>
+                    <div class="metric-comparison positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>1.2°C</span>
+                        <span class="text-muted">vs periode sebelumnya</span>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="tempChart"></canvas>
+                </div>
+            </div>
+
+            <div class="metric-card card col-span-4">
+                <div class="metric-header">
+                    <div class="flex-between">
+                        <div>
+                            <div class="metric-value" id="avgPh">7.2</div>
+                            <div class="metric-comparison negative">
+                                <i class="fas fa-arrow-down"></i>
+                                <span>0.3</span>
+                                <span class="text-muted">vs periode sebelumnya</span>
+                            </div>
+                        </div>
+                        <div class="chart-legend">
+                            <div class="legend-item">
+                                <span class="dot current"></span>
+                                <span>pH Sekarang</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="dot previous"></span>
+                                <span>Periode sebelumnya</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="phChart"></canvas>
+                </div>
+            </div>
+
+            <div class="metric-card card col-span-4">
+                <div class="metric-header">
+                    <h3 class="metric-title">Status Sistem</h3>
+                    <p class="metric-subtitle">Distribusi 24 jam terakhir</p>
+                </div>
+                <div id="statusBubble" class="chart-container">
+                    <canvas id="statusChart"></canvas>
+                </div>
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <span class="dot success"></span>
+                        <span>Normal (75%)</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="dot warning"></span>
+                        <span>Warning (20%)</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="dot danger"></span>
+                        <span>Critical (5%)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top area charts row: three area charts to match sample -->
+            <!-- Provide an additional full-width trend on the next row to represent 'Overview A' -->
+            <div class="card col-span-8 trend-chart">
+                <div class="card-header"><span class="card-title">Overview A</span></div>
+                <canvas id="trendChartA"></canvas>
+            </div>
+            
+            <!-- small bubble/legend or map placeholder (left column) -->
+            <div class="card col-span-4">
+                <div class="card-header"><span class="card-title">Spent by Country</span></div>
+                <div class="bubble-placeholder"></div>
+            </div>
+
+            <!-- Gauge row -->
+            <div class="gauge-card card col-span-6">
+                <h3>Kadar Oksigen</h3>
+                <div class="gauge-container">
+                    <canvas id="oxygenGauge"></canvas>
+                    <img class="gauge-needle" src="{% static 'images/gauge-needle.svg' %}" alt="">
+                </div>
+                <div class="gauge-value" id="oxygenValue">6.5 mg/L</div>
+                <div class="gauge-label">Optimal: 5.0 - 7.0 mg/L</div>
+            </div>
+
+            <div class="gauge-card card col-span-6">
+                <h3>Kadar Amonia</h3>
+                <div class="gauge-container">
+                    <canvas id="ammoniaGauge"></canvas>
+                    <img class="gauge-needle" src="{% static 'images/gauge-needle.svg' %}" alt="">
+                </div>
+                <div class="gauge-value" id="ammoniaValue">0.3 mg/L</div>
+                <div class="gauge-label">Batas aman: &lt; 0.5 mg/L</div>
+            </div>
+
+            <!-- Table row -->
+            <div class="card col-span-6">
+                <div class="metric-header">
+                    <h3 class="metric-title">Log Otomatisasi</h3>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Waktu</th>
+                                <th>Aksi</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="automationLog">
+                            <tr>
+                                <td>27/10 11:45</td>
+                                <td>Aktivasi Aerator</td>
+                                <td><span class="badge success">Berhasil</span></td>
+                            </tr>
+                            <tr>
+                                <td>27/10 11:30</td>
+                                <td>Pergantian Air 20%</td>
+                                <td><span class="badge warning">Proses</span></td>
+                            </tr>
+                            <tr>
+                                <td>27/10 11:00</td>
+                                <td>Pemberian Pakan</td>
+                                <td><span class="badge success">Berhasil</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card col-span-6">
+                <div class="metric-header">
+                    <h3 class="metric-title">Status Perangkat</h3>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Perangkat</th>
+                                <th>Status</th>
+                                <th>Update Terakhir</th>
+                            </tr>
+                        </thead>
+                        <tbody id="deviceStatus">
+                            <tr>
+                                <td>Sensor Suhu</td>
+                                <td><span class="badge success">Online</span></td>
+                                <td>1 menit lalu</td>
+                            </tr>
+                            <tr>
+                                <td>Sensor pH</td>
+                                <td><span class="badge success">Online</span></td>
+                                <td>1 menit lalu</td>
+                            </tr>
+                            <tr>
+                                <td>Sensor Oksigen</td>
+                                <td><span class="badge success">Online</span></td>
+                                <td>1 menit lalu</td>
+                            </tr>
+                            <tr>
+                                <td>Sensor Amonia</td>
+                                <td><span class="badge success">Online</span></td>
+                                <td>1 menit lalu</td>
+                            </tr>
+                            <tr>
+                                <td>Aerator</td>
+                                <td><span class="badge success">Aktif</span></td>
+                                <td>1 menit lalu</td>
+                            </tr>
+                            <tr>
+                                <td>Pompa Filter</td>
+                                <td><span class="badge success">Aktif</span></td>
+                                <td>1 menit lalu</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+
+    <script src="{% static 'main.js' %}"></script>
+</body>
+</html>

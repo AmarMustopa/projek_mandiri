@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Aquarium Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #0f172a; color: #e2e8f0; }
+        .card { @apply rounded-lg p-4 mb-4 border border-slate-700; }
+        .card-title { @apply text-lg font-semibold mb-3 text-slate-200; }
+        .grid-value { @apply text-2xl font-bold text-slate-100; }
+        .grid-label { @apply text-sm text-slate-400; }
+    </style>
+</head>
+<body class="p-6">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6">Smart Aquarium IoT Dashboard</h1>
+        
+        <!-- Latest Readings Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="card bg-slate-800">
+                <div class="card-title">Suhu</div>
+                <div class="grid-value" id="latest-suhu">--</div>
+                <div class="grid-label">Celsius</div>
+            </div>
+            <div class="card bg-slate-800">
+                <div class="card-title">pH Level</div>
+                <div class="grid-value" id="latest-ph">--</div>
+                <div class="grid-label">pH</div>
+            </div>
+            <div class="card bg-slate-800">
+                <div class="card-title">Kekeruhan</div>
+                <div class="grid-value" id="latest-kekeruhan">--</div>
+                <div class="grid-label">NTU</div>
+            </div>
+        </div>
+
+        <!-- Sensor Trends -->
+        <div class="card bg-slate-800">
+            <div class="card-title">Sensor Trends</div>
+            <canvas id="trendChart" class="w-full" height="300"></canvas>
+        </div>
+
+        <!-- Water Quality Status -->
+        <div class="card bg-slate-800 mt-4">
+            <div class="card-title">Water Quality Status</div>
+            <div id="quality-status" class="text-lg">Analyzing...</div>
+            <div id="notifications" class="mt-2 text-sm text-slate-400"></div>
+        </div>
+    </div>
+
+    <script>
+        // Chart initialization
+        const ctx = document.getElementById('trendChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Suhu (°C)',
+                    borderColor: '#60a5fa',
+                    data: [],
+                }, {
+                    label: 'pH',
+                    borderColor: '#34d399',
+                    data: [],
+                }, {
+                    label: 'Kekeruhan',
+                    borderColor: '#f97316',
+                    data: []
+                }]
+            },
+            options: {
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#94a3b8'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#94a3b8'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#94a3b8'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Function to update the chart with new data
+        function updateChart(data) {
+            chart.data.labels = data.map(d => d.timestamp.split(' ')[1]);
+            chart.data.datasets[0].data = data.map(d => d.suhu);
+            chart.data.datasets[1].data = data.map(d => d.ph);
+            chart.data.datasets[2].data = data.map(d => d.kekeruhan);
+            chart.update();
+        }
+
+        // Function to update latest readings
+        function updateLatestReadings(latest) {
+            document.getElementById('latest-suhu').textContent = latest.suhu + ' °C';
+            document.getElementById('latest-ph').textContent = latest.ph;
+            document.getElementById('latest-kekeruhan').textContent = latest.kekeruhan;
+
+            // Update quality status
+            let status = 'Normal';
+            let notifications = [];
+
+            if (latest.suhu < 24 || latest.suhu > 30) {
+                status = 'Warning';
+                notifications.push(`Temperature ${latest.suhu}°C is outside optimal range (24-30°C)`);
+            }
+            if (latest.ph < 6.5 || latest.ph > 8.0) {
+                status = 'Warning';
+                notifications.push(`pH ${latest.ph} is outside optimal range (6.5-8.0)`);
+            }
+            if (latest.kekeruhan > 20) {
+                status = 'Warning';
+                notifications.push(`Water turbidity is high (${latest.kekeruhan} NTU)`);
+            }
+
+            document.getElementById('quality-status').textContent = `Status: ${status}`;
+            document.getElementById('quality-status').className = 
+                status === 'Warning' ? 'text-lg text-yellow-500' : 'text-lg text-green-500';
+            document.getElementById('notifications').innerHTML = 
+                notifications.length ? notifications.join('<br>') : 'All parameters within normal range';
+        }
+
+        // Function to fetch and update data
+        async function fetchData() {
+            try {
+                const response = await fetch('/api/dummy-sensors/');
+                const data = await response.json();
+                if (data && data.length > 0) {
+                    updateChart(data);
+                    updateLatestReadings(data[data.length - 1]); // Use most recent reading
+                }
+            } catch (error) {
+                console.error('Error fetching sensor data:', error);
+            }
+        }
+
+        // Initial fetch and setup interval
+        fetchData();
+        setInterval(fetchData, 5000); // Update every 5 seconds
+    </script>
+</body>
+</html>

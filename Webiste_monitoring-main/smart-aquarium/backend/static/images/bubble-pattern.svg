@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice">
+  <g fill="none" stroke="#ffffff" stroke-opacity="0.06">
+    <circle cx="60" cy="60" r="6" fill="#60a5fa" fill-opacity="0.06" stroke="none"/>
+    <circle cx="120" cy="90" r="6" fill="#a78bfa" fill-opacity="0.06" stroke="none"/>
+    <circle cx="180" cy="40" r="6" fill="#34d399" fill-opacity="0.06" stroke="none"/>
+    <circle cx="240" cy="110" r="6" fill="#60a5fa" fill-opacity="0.06" stroke="none"/>
+    <circle cx="300" cy="70" r="6" fill="#f59e0b" fill-opacity="0.06" stroke="none"/>
+    <!-- repeated subtle dots -->
+    <g opacity="0.5">
+      <circle cx="360" cy="30" r="4" fill="#fff" fill-opacity="0.03"/>
+      <circle cx="420" cy="120" r="5" fill="#fff" fill-opacity="0.02"/>
+      <circle cx="480" cy="50" r="4" fill="#fff" fill-opacity="0.03"/>
+    </g>
+  </g>
+</svg>

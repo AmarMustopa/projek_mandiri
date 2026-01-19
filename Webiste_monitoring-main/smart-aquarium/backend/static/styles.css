@@ -1,0 +1,557 @@
+:root {
+  /* Core colors exactly matching reference */
+  --bg-primary: #040B14;
+  --bg-card: #0A1A2C;
+  --bg-card-hover: #0C1E32;
+  
+  /* Text colors */
+  --text-primary: #F8FAFC;
+  --text-secondary: #E2E8F0;
+  --text-muted: #94A3B8;
+  
+  /* Accent colors */
+  --accent-blue: #3B82F6;
+  --accent-purple: #7C3AED;
+  --accent-cyan: #06B6D4;
+  
+  /* Chart colors */
+  --chart-blue: #60A5FA;
+  --chart-purple: #7C3AED;
+  --chart-cyan: #06B6D4;
+  --chart-previous: #94A3B8;
+  --chart-area-opacity: 0.15;
+  
+  /* Status indicators */
+  --success: #22C55E;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  
+  /* Gradients */
+  --gradient-card: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0));
+  --gradient-blue: linear-gradient(180deg, rgba(59,130,246,0.15), rgba(59,130,246,0));
+  --gradient-purple: linear-gradient(180deg, rgba(124,58,237,0.15), rgba(124,58,237,0));
+  
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+  --shadow-card: 0 8px 32px rgba(0,0,0,0.2);
+  
+  /* Transitions */
+  --transition-all: all 0.2s ease-in-out;
+}
+
+/* Base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Layout */
+.dashboard {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.header {
+    margin-bottom: 2rem;
+    padding: 1rem 0;
+}
+
+.header h1 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.025em;
+}
+
+.header p {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+/* Cards */
+.card {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    transition: var(--transition-all);
+    box-shadow: var(--shadow-card);
+}
+
+.card:hover {
+    background: var(--bg-card-hover);
+    transform: translateY(-2px);
+}
+
+/* Metric cards */
+.metric-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.metric-header {
+    margin-bottom: 1rem;
+}
+
+.metric-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.metric-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+}
+
+.metric-value {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+.metric-comparison {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+}
+
+.metric-comparison.positive { color: var(--success); }
+.metric-comparison.negative { color: var(--danger); }
+
+/* Charts */
+.chart-container {
+    position: relative;
+    height: 200px;
+    margin-top: 1rem;
+}
+
+/* Chart legends */
+.chart-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.legend-item .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.dot.current { background-color: var(--chart-blue); }
+.dot.previous { background-color: var(--chart-previous); }
+
+/* Gauge cards */
+.gauge-card {
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.gauge-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 1rem 0 0.25rem;
+}
+
+.gauge-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Tables */
+.table-container {
+    margin-top: 1rem;
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.data-table td {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.data-table .numeric {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Utility classes */
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.text-muted {
+    color: var(--text-muted);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .grid-container {
+        gap: 1rem;
+    }
+    
+    .card {
+        padding: 1rem;
+    }
+    
+    .metric-value {
+        font-size: 1.875rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard {
+        padding: 1rem;
+    }
+    
+    .grid-container {
+        grid-template-columns: 1fr;
+    }
+    
+    [class*="col-span-"] {
+        grid-column: 1 / -1;
+    }
+    
+    .chart-container {
+        height: 180px;
+    }
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#071726 0%, #0b1220 100%);color:#e6eef6}
+.topbar{padding:20px 28px;border-bottom:1px solid rgba(255,255,255,0.04);background:linear-gradient(90deg,#041827 0%, #071e33 100%)}
+.brand{font-weight:800;font-size:20px;letter-spacing:0.4px}
+.subtitle{font-size:12px;color:var(--muted);margin-top:4px}
+.app-shell{min-height:100vh;display:flex;flex-direction:column}
+.grid{display:grid;grid-template-columns:260px 1fr 260px;gap:18px;padding:20px}
+
+/* 12-column grid container used by template */
+.grid-container{
+  display:grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap:18px;
+  padding:18px;
+  align-items:start;
+}
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.015));padding:18px;border-radius:12px;box-shadow:0 10px 40px rgba(2,6,23,0.75);border:1px solid rgba(255,255,255,0.03)}
+.left-panel .card{margin-bottom:12px}
+.card h3{margin:0 0 8px 0;font-weight:600}
+.metric{display:flex;justify-content:space-between;padding:8px 0;border-top:1px dashed rgba(255,255,255,0.03)}
+.metric .label{color:var(--muted);font-size:13px}
+.metric span{font-weight:700}
+.meta{font-size:12px;color:var(--muted);margin-top:8px}
+.small{padding:10px}
+.chart-card{height:360px;display:flex;flex-direction:column}
+.chart-placeholder{flex:1;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.005));display:flex;align-items:center;justify-content:center;color:var(--muted);border-radius:6px}
+.stats-row{display:flex;gap:12px;margin-top:12px}
+.stat{flex:1;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:6px;text-align:center}
+.stat-title{font-size:12px;color:var(--muted)}
+.stat-value{font-size:28px;font-weight:800;margin-top:6px;color:#dbeafe}
+.right-panel .card{margin-bottom:12px}
+@media (max-width:900px){
+  .grid{grid-template-columns:1fr}
+  .right-panel,.left-panel{order:2}
+}
+
+/* Top large metric cards like the example */
+.stats-large {grid-column: span 4; padding:20px; display:flex;flex-direction:column; justify-content:space-between; min-height:120px}
+/* Hero metrics styling */
+.hero-number {
+  font-size: 48px;
+  line-height: 1;
+  font-weight: 700;
+  color: var(--text);
+  margin: 16px 0 8px;
+}
+
+.metric-number {
+  font-size: 32px;
+  line-height: 1.2;
+  font-weight: 600;
+  color: var(--text);
+  margin: 4px 0;
+}
+
+/* Comparison indicators */
+.comparison {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.comparison.positive { color: var(--success); }
+.comparison.negative { color: var(--danger); }
+.comparison .period { 
+  color: var(--muted);
+  margin-left: 4px;
+}
+
+.comparison .icon {
+  font-size: 12px;
+}
+
+/* Chart legends */
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.chart-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-item .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.legend-item .dot.current {
+  background: var(--chart-blue);
+}
+
+.legend-item .dot.previous {
+  background: var(--chart-previous);
+}
+
+/* Cards refined */
+.card {
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+/* Chart containers */
+.chart-container {
+  margin-top: 24px;
+  position: relative;
+}
+
+/* Gauge refinements */
+.gauge-card {
+  text-align: center;
+}
+
+.gauge-value {
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 16px 0 4px;
+}
+
+.gauge-label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Table styles matching reference */
+.table-container {
+  margin-top: 16px;
+  overflow: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.data-table th {
+  text-align: left;
+  padding: 12px 16px;
+  color: var(--muted);
+  font-weight: 500;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.data-table td {
+  padding: 12px 16px;
+  color: var(--text);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.data-table .numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.stats-large .sub { color:var(--muted); font-size:13px }
+
+/* Trend area style */
+.trend-area { height:420px }
+
+/* Neon glow for chart canvas and lines */
+.trend-chart canvas {
+  filter: drop-shadow(0 18px 40px rgba(2,6,23,0.6));
+  border-radius:8px;
+  background: linear-gradient(180deg, rgba(10,24,38,0.2), rgba(6,14,22,0.12));
+}
+
+/* Optional subtle glow for card titles */
+.card-title {
+  text-shadow: 0 4px 14px rgba(2,6,23,0.6);
+  color: #cfe7ff;
+  font-weight:700;
+}
+
+/* Gauge small canvas sizing */
+.gauge-card canvas { width: 100% !important; height: 120px !important }
+
+.gauge-card .stats-value{font-size:22px;font-weight:800;color:#f8fbff;margin-top:8px;text-align:center}
+.gauge-card .stats-label{font-size:12px;color:var(--muted);text-align:center}
+
+/* Table more compact and dark */
+.table { width:100%; border-collapse:collapse; font-size:13px }
+.table th, .table td { padding:10px; border-bottom:1px solid rgba(255,255,255,0.03); color:#cbd5e1 }
+.table th { color:var(--muted); font-weight:600 }
+
+/* Notifications */
+.notification-item { padding:10px; border-bottom:1px solid rgba(255,255,255,0.02); color:#cbd5e1 }
+
+/* status badges */
+.status{display:inline-block;padding:6px 10px;border-radius:18px;font-weight:700;color:#fff;background:rgba(255,255,255,0.03)}
+.status-good{background:linear-gradient(90deg,#064e3b,#16a34a)}
+.status-warning{background:linear-gradient(90deg,#92400e,#f59e0b)}
+.status-critical{background:linear-gradient(90deg,#7f1d1d,#f43f5e)}
+
+/* small screens tweaks */
+@media (max-width:720px){
+  .gauge-card canvas { height: 90px !important }
+}
+
+/* Column span helpers (like Tailwind) for easier layout control */
+.col-span-1 { grid-column: span 1; }
+.col-span-2 { grid-column: span 2; }
+.col-span-3 { grid-column: span 3; }
+.col-span-4 { grid-column: span 4; }
+.col-span-5 { grid-column: span 5; }
+.col-span-6 { grid-column: span 6; }
+.col-span-7 { grid-column: span 7; }
+.col-span-8 { grid-column: span 8; }
+.col-span-9 { grid-column: span 9; }
+.col-span-10 { grid-column: span 10; }
+.col-span-11 { grid-column: span 11; }
+.col-span-12 { grid-column: span 12; }
+
+/* compact tweaks to tighten spacing like the reference */
+.card{padding:14px}
+.grid-container { gap:12px }
+.trend-chart { min-height:220px }
+
+/* Background decorative graphic (hero) */
+.dashboard {
+  position: relative;
+}
+.dashboard::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url('/static/images/bg-hero.svg');
+  background-size: cover;
+  background-position: center top;
+  opacity: 0.24;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(18px) saturate(120%);
+}
+
+/* ensure cards stack above background */
+.grid-container, .card {
+  position: relative;
+  z-index: 1;
+}
+
+/* Bubble visual placeholder */
+.bubble-placeholder {
+  background-image: url('/static/images/bubble-pattern.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  min-height: 180px;
+}
+
+/* Gauge needle overlay (absolute inside gauge container) */
+.gauge-container { position: relative; }
+.gauge-needle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 36px;
+  height: 36px;
+  transform-origin: 50% 70%;
+  transform: translate(-50%, -50%) rotate(0deg);
+  pointer-events: none;
+  opacity: 0.95;
+}

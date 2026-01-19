@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Sistem Aquarium</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #6B7B9E 0%, #4A5568 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        .card-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        .left-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .left-panel::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+        }
+        .input-field {
+            background: rgba(17, 24, 39, 0.05);
+            border: 1px solid rgba(17, 24, 39, 0.1);
+            transition: all 0.3s;
+        }
+        .input-field:focus {
+            background: white;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 md:p-6">
+    <div class="card-container max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 max-h-screen overflow-hidden">
+        <!-- Left Panel -->
+        <div class="left-panel p-8 md:p-12 flex flex-col justify-between text-white relative hidden md:flex">
+            <!-- Top - Logo -->
+            <div class="flex items-center space-x-2 mb-8 relative z-10">
+                <div class="w-10 h-10 bg-white/20 rounded-lg backdrop-blur-sm flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+                    </svg>
+                </div>
+                <span class="text-xl font-bold">WEBSITE IOT MONITORING</span>
+            </div>
+            
+            <!-- Center - IoT Device Management Image (Full Height) -->
+            <div class="flex-1 flex items-center justify-center relative z-10 min-h-0">
+                <div class="w-full">
+                    <img src="https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?w=800&q=80" 
+                         alt="IoT Device Management" 
+                         class="w-full h-auto rounded-xl opacity-90 shadow-2xl object-cover max-h-96"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <!-- Fallback SVG illustration -->
+                    <div style="display:none;" class="text-center space-y-6">
+                        <!-- IoT Network Illustration -->
+                        <div class="relative w-64 h-64 mx-auto">
+                            <svg class="w-full h-full" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Central Hub -->
+                                <circle cx="100" cy="100" r="20" fill="white" opacity="0.9"/>
+                                <circle cx="100" cy="100" r="15" fill="currentColor" opacity="0.3"/>
+                                
+                                <!-- Connected Devices (8 nodes around center) -->
+                                <g opacity="0.8">
+                                    <!-- Top -->
+                                    <circle cx="100" cy="30" r="12" fill="white"/>
+                                    <line x1="100" y1="80" x2="100" y2="42" stroke="white" stroke-width="2" stroke-dasharray="4 4"/>
+                                    
+                                    <!-- Top Right -->
+                                    <circle cx="150" cy="50" r="12" fill="white"/>
+                                    <line x1="115" y1="85" x2="142" y2="58" stroke="white" stroke-width="2" stroke-dasharray="4 4"/>
+                                    
+                                    <!-- Right -->
+                                    <circle cx="170" cy="100" r="12" fill="white"/>
+                                    <line x1="120" y1="100" x2="158" y2="100" stroke="white" stroke-width="2" stroke-dasharray="4 4"/>
+                                    
+                                    <!-- Bottom Right -->
+                                    <circle cx="150" cy="150" r="12" fill="white"/>
+                                    <line x1="115" y1="115" x2="142" y2="142" stroke="white" stroke-width="2" stroke-dasharray="4 4"/>
+                                    
+                                    <!-- Bottom -->
+                                    <circle cx="100" cy="170" r="12" fill="white"/>
+                                    <line x1="100" y1="120" x2="100" y2="158" stroke="white" stroke-width="2" stroke-dasharray="4 4"/>
+                                    
+                                    <!-- Bottom Left -->
+                                    <circle cx="50" cy="150" r="12" fill="white"/>
+                                    <line x1="85" y1="115" x2="58" y2="142" stroke="white" stroke-width="2" stroke-dasharray="4 4"/>
+                                    
+                                    <!-- Left -->
+                                    <circle cx="30" cy="100" r="12" fill="white"/>
+                                    <line x1="80" y1="100" x2="42" y2="100" stroke="white" stroke-width="2" stroke-dasharray="4 4"/>
+                                    
+                                    <!-- Top Left -->
+                                    <circle cx="50" cy="50" r="12" fill="white"/>
+                                    <line x1="85" y1="85" x2="58" y2="58" stroke="white" stroke-width="2" stroke-dasharray="4 4"/>
+                                </g>
+                                
+                                <!-- Pulse rings -->
+                                <circle cx="100" cy="100" r="30" stroke="white" stroke-width="1" fill="none" opacity="0.3">
+                                    <animate attributeName="r" from="30" to="60" dur="2s" repeatCount="indefinite"/>
+                                    <animate attributeName="opacity" from="0.3" to="0" dur="2s" repeatCount="indefinite"/>
+                                </circle>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold mb-3">IoT Device<br/>Management Platform</h1>
+                            <p class="text-white/80 text-sm px-8">Monitor and control your connected devices in real-time</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bottom - Links -->
+            <div class="flex items-center space-x-2 text-sm text-white/60 relative z-10">
+                <a href="#" class="hover:text-white transition">Help & Support</a>
+                <span>•</span>
+                <a href="#" class="hover:text-white transition">Terms</a>
+            </div>
+        </div>
+
+        <!-- Right Panel - Register Form -->
+        <div class="bg-gray-900 p-6 md:p-12 flex flex-col justify-center overflow-y-auto max-h-screen">
+            <!-- Mobile Logo (hanya tampil di mobile) -->
+            <div class="flex items-center justify-center space-x-2 mb-6 md:hidden">
+                <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+                    </svg>
+                </div>
+                <span class="text-xl font-bold text-white">WEBSITE IOT MONITORING</span>
+            </div>
+
+            <div class="mb-6 md:mb-8">
+                <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Create an account</h2>
+                <p class="text-gray-400 text-sm">
+                    Already have an account? 
+                    <a href="{% url 'login' %}" class="text-purple-400 hover:text-purple-300 transition">Log in</a>
+                </p>
+            </div>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="mb-4 p-3 rounded-lg {% if message.tags == 'error' %}bg-red-500/10 border border-red-500/20 text-red-400{% else %}bg-green-500/10 border border-green-500/20 text-green-400{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST" action="{% url 'register' %}" class="space-y-3 md:space-y-4">
+                {% csrf_token %}
+                
+                <!-- Name Fields -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">First name</label>
+                        <input type="text" name="first_name" required 
+                               class="input-field w-full px-4 py-2.5 md:py-3 bg-gray-800 text-white rounded-lg outline-none text-sm md:text-base"
+                               placeholder="Name">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Last name</label>
+                        <input type="text" name="last_name" required 
+                               class="input-field w-full px-4 py-2.5 md:py-3 bg-gray-800 text-white rounded-lg outline-none text-sm md:text-base"
+                               placeholder="Surname">
+                    </div>
+                </div>
+
+                <!-- Username -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Username</label>
+                    <input type="text" name="username" required 
+                           class="input-field w-full px-4 py-2.5 md:py-3 bg-gray-800 text-white rounded-lg outline-none text-sm md:text-base"
+                           placeholder="Choose a username">
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                    <input type="email" name="email" required 
+                           class="input-field w-full px-4 py-2.5 md:py-3 bg-gray-800 text-white rounded-lg outline-none text-sm md:text-base"
+                           placeholder="your.email@example.com">
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                    <input type="password" name="password1" required 
+                           class="input-field w-full px-4 py-2.5 md:py-3 bg-gray-800 text-white rounded-lg outline-none text-sm md:text-base"
+                           placeholder="Create a password">
+                </div>
+
+                <!-- Confirm Password -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Confirm Password</label>
+                    <input type="password" name="password2" required 
+                           class="input-field w-full px-4 py-2.5 md:py-3 bg-gray-800 text-white rounded-lg outline-none text-sm md:text-base"
+                           placeholder="Confirm your password">
+                </div>
+
+                <!-- Terms Checkbox -->
+                <div class="flex items-center">
+                    <input type="checkbox" name="terms" id="terms" required
+                           class="h-4 w-4 bg-gray-800 border-gray-700 rounded text-purple-500 focus:ring-purple-500">
+                    <label for="terms" class="ml-2 text-sm text-gray-400">
+                        I agree to the <a href="#" class="text-purple-400 hover:text-purple-300">Terms & Conditions</a>
+                    </label>
+                </div>
+
+                <!-- Register Button -->
+                <button type="submit" 
+                        class="btn-primary w-full text-white py-2.5 md:py-3 px-4 rounded-lg font-medium text-sm md:text-base">
+                    Create account
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="relative my-4 md:my-6">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-800"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-3 bg-gray-900 text-gray-500">Or continue with</span>
+                </div>
+            </div>
+
+            <!-- Social Login -->
+            <div class="grid grid-cols-2 gap-3">
+                <button class="flex items-center justify-center px-4 py-2.5 md:py-3 bg-gray-800 hover:bg-gray-750 rounded-lg transition text-sm">
+                    <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    <span class="text-gray-300 text-sm">Google</span>
+                </button>
+                <button class="flex items-center justify-center px-4 py-2.5 md:py-3 bg-gray-800 hover:bg-gray-750 rounded-lg transition text-sm">
+                    <svg class="w-5 h-5 mr-2 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M9.09 9.35c0 .83-.71 1.51-1.59 1.51s-1.59-.68-1.59-1.51.71-1.51 1.59-1.51 1.59.68 1.59 1.51zm-1.59-7.35c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10-4.48-10-10-10zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                    </svg>
+                    <span class="text-gray-300 text-sm">Apple</span>
+                </button>
+            </div>
+
+            <!-- Mobile Footer -->
+            <div class="mt-6 flex items-center justify-center space-x-2 text-xs text-gray-500 md:hidden">
+                <a href="#" class="hover:text-gray-400 transition">Help & Support</a>
+                <span>•</span>
+                <a href="#" class="hover:text-gray-400 transition">Terms</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-hide messages after 5 seconds
+        setTimeout(() => {
+            const messages = document.querySelectorAll('[class*="bg-red-500"], [class*="bg-green-500"]');
+            messages.forEach(msg => {
+                msg.style.transition = 'opacity 0.5s';
+                msg.style.opacity = '0';
+                setTimeout(() => msg.remove(), 500);
+            });
+        }, 5000);
+    </script>
+</body>
+</html>
+                               placeholder="Create a password">
+                    </div>
+                    <p class="mt-1 text-xs text-gray-500">At least 8 characters</p>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                        </div>
+                        <input type="password" name="password2" required 
+                               class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                               placeholder="Confirm your password">
+                    </div>
+                </div>
+
+                <!-- Terms & Conditions -->
+                <div class="mb-6">
+                    <label class="flex items-start">
+                        <input type="checkbox" required class="w-4 h-4 mt-1 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                        <span class="ml-2 text-sm text-gray-600">
+                            I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-700 font-medium">Terms of Service</a> 
+                            and <a href="#" class="text-indigo-600 hover:text-indigo-700 font-medium">Privacy Policy</a>
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Register Button -->
+                <button type="submit" 
+                        class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl">
+                    Create Account
+                </button>
+            </form>
+
+            <!-- Login Link -->
+            <div class="mt-6 text-center">
+                <p class="text-gray-600">
+                    Already have an account? 
+                    <a href="{% url 'login' %}" class="text-indigo-600 hover:text-indigo-700 font-semibold">Sign in</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-8 text-center text-sm text-white/90">
+            <p>&copy; 2025 Smart Aquarium IoT System. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

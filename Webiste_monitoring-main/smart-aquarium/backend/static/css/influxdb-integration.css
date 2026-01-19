@@ -1,0 +1,140 @@
+/* InfluxDB Integration Styles */
+
+/* Status Badges */
+.status-ideal,
+.status-good,
+.status-normal {
+    background-color: #10b981 !important;
+    color: white !important;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-warning,
+.status-high,
+.status-low {
+    background-color: #f59e0b !important;
+    color: white !important;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-critical {
+    background-color: #ef4444 !important;
+    color: white !important;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Loading Indicator */
+#dataLoader {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(6, 182, 212, 0.9);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    display: none;
+    z-index: 9999;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#dataLoader::after {
+    content: '●●●';
+    animation: loading 1s infinite;
+    margin-left: 8px;
+}
+
+@keyframes loading {
+    0% { content: '●○○'; }
+    33% { content: '○●○'; }
+    66% { content: '○○●'; }
+    100% { content: '●○○'; }
+}
+
+/* Error Message */
+#errorMessage {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(239, 68, 68, 0.95);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    display: none;
+    z-index: 9999;
+    max-width: 400px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Last Update Timestamp */
+#lastUpdate {
+    font-size: 12px;
+    color: #64748b;
+    font-style: italic;
+}
+
+/* Refresh Button */
+.btn-refresh {
+    background: linear-gradient(135deg, #06b6d4 0%, #0284c7 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-refresh:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+}
+
+.btn-refresh:active {
+    transform: translateY(0);
+}
+
+/* Connection Status */
+.connection-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.connection-status.connected {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.connection-status.disconnected {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.connection-status::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
